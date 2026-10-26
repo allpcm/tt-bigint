@@ -1,56 +1,60 @@
 # Tiny Tapeout project information
 project:
-  title:        ""      # Project title
-  author:       ""      # Your name
-  discord:      ""      # Your discord username, for communication and automatically assigning you a Tapeout role (optional)
-  description:  ""      # One line description of what your project does
-  language:     "Verilog" # other examples include SystemVerilog, Amaranth, VHDL, etc
-  clock_hz:     0       # Clock frequency in Hz (or 0 if not applicable)
+  title:        "128-bit Bit-Serial Integer Accumulator"
+  author:       "Phillip Moore"
+  discord:      ""
+  description:  "Exact 128-bit integer arithmetic from one full adder. Bit-serial add and subtract in 130 cycles, with shift, swap and byte I/O. Companion to the ternary MLP tile."
+  language:     "Verilog"
+  clock_hz:     50000000
 
   # How many tiles your design occupies? A single tile is about 167x108 uM.
-  tiles: "1x1"          # Valid values: 1x1, 1x2, 2x2, 3x2, 4x2, 6x2 or 8x2
+  # Estimated ~61% utilization at 2x2. If global placement fails with
+  # GPL-0302, raise PL_TARGET_DENSITY_PCT in src/config.json before moving
+  # to 4x2 - the design is dominated by register write-mode multiplexing,
+  # which places densely.
+  tiles: "2x2"
 
   # Your top module name must start with "tt_um_". Make it unique by including your github username:
-  top_module:  "tt_um_example"
+  top_module:  "tt_um_pcm_bigint"
 
   # List your project's source files here.
   # Source files must be in ./src and you must list each source file separately, one per line.
   # Don't forget to also update `PROJECT_SOURCES` in test/Makefile.
   source_files:
-    - "project.v"
+    - "tt_um_pcm_bigint.v"
 
 # The pinout of your project. Leave unused pins blank. DO NOT delete or add any pins.
 # This section is for the datasheet/website. Use descriptive names (e.g., RX, TX, MOSI, SCL, SEG_A, etc.).
 pinout:
   # Inputs
-  ui[0]: ""
-  ui[1]: ""
-  ui[2]: ""
-  ui[3]: ""
-  ui[4]: ""
-  ui[5]: ""
-  ui[6]: ""
-  ui[7]: ""
+  ui[0]: "data byte in bit 0"
+  ui[1]: "data byte in bit 1"
+  ui[2]: "data byte in bit 2"
+  ui[3]: "data byte in bit 3"
+  ui[4]: "data byte in bit 4"
+  ui[5]: "data byte in bit 5"
+  ui[6]: "data byte in bit 6"
+  ui[7]: "data byte in bit 7"
 
   # Outputs
-  uo[0]: ""
-  uo[1]: ""
-  uo[2]: ""
-  uo[3]: ""
-  uo[4]: ""
-  uo[5]: ""
-  uo[6]: ""
-  uo[7]: ""
+  uo[0]: "data byte out bit 0"
+  uo[1]: "data byte out bit 1"
+  uo[2]: "data byte out bit 2"
+  uo[3]: "data byte out bit 3"
+  uo[4]: "data byte out bit 4"
+  uo[5]: "data byte out bit 5"
+  uo[6]: "data byte out bit 6"
+  uo[7]: "data byte out bit 7"
 
   # Bidirectional pins
-  uio[0]: ""
-  uio[1]: ""
-  uio[2]: ""
-  uio[3]: ""
-  uio[4]: ""
-  uio[5]: ""
-  uio[6]: ""
-  uio[7]: ""
+  uio[0]: "opcode bit 0 (in)"
+  uio[1]: "opcode bit 1 (in)"
+  uio[2]: "opcode bit 2 (in)"
+  uio[3]: "strobe (in)"
+  uio[4]: "busy (out)"
+  uio[5]: "done (out)"
+  uio[6]: "zero flag, A == 0 (out)"
+  uio[7]: "carry out / not borrow (out)"
 
 # Do not change!
 yaml_version: 6
