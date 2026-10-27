@@ -8,11 +8,17 @@ project:
   clock_hz:     50000000
 
   # How many tiles your design occupies? A single tile is about 167x108 uM.
-  # Estimated ~61% utilization at 2x2. If global placement fails with
-  # GPL-0302, raise PL_TARGET_DENSITY_PCT in src/config.json before moving
-  # to 4x2 - the design is dominated by register write-mode multiplexing,
-  # which places densely.
-  tiles: "2x2"
+  # MEASURED at 2x2 (run 40520428533): 25,092 um^2 of post-PnR standard
+  # cells on a 75,602 um^2 die - 33.2% utilization, i.e. the design was
+  # paying for twice the silicon it used. On a 1x2 die (~37,801 um^2) the
+  # same cells are 66.4%, above LibreLane's 60 default but inside the ~80
+  # that is reported workable. The aspect ratio also changes, so routing is
+  # the real risk rather than placement density.
+  #
+  # If global placement fails with GPL-0302, first raise
+  # PL_TARGET_DENSITY_PCT in src/config.json; if routing fails, go back to
+  # "2x2" - it is known good.
+  tiles: "1x2"
 
   # Your top module name must start with "tt_um_". Make it unique by including your github username:
   top_module:  "tt_um_pcm_bigint"
