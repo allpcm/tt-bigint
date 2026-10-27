@@ -42,6 +42,39 @@ question "what should transistors buy?" in opposite directions.
 Neither is better. Which one is right depends entirely on the question being
 asked, and that is the point of building both.
 
+## Measured results
+
+CI run 40520428533, LibreLane, sky130A. All checks green.
+
+| | |
+|---|---|
+| Synthesis | 1,577 cells, 17,600 µm² |
+| Post-PnR standard cells | 3,221 instances, 25,092 µm² |
+| Die area (2×2) / utilization | 75,602 µm² / 34.6% |
+| Flip-flops | 277, 5,892 µm² |
+| Worst setup slack | 4.34 ns of 20 ns (ss, 100 °C, 1.60 V) |
+| Worst hold slack | +0.113 ns (ff, −40 °C, 1.95 V) |
+| Setup/hold TNS, WNS | 0.0 at every corner |
+| DRC route / magic | 0 / 0 |
+| Verilator `-Wall`, inferred latches | clean, 0 |
+
+Static timing at the typical corner puts the worst register-to-register path —
+the actual datapath — at 3.924 ns arrival with 16.15 ns of slack, the fastest
+class of path in the design. The overall worst path runs from an opcode input
+pin to a register at 8.250 ns, of which 4.000 ns is the constraint file's
+assumed external input delay and 2.977 ns is fanout and hold-fix buffering
+inserted by the flow. **The design contains 1.27 ns of combinational logic.**
+
+The bit-serial adder is shallow enough that the tool had to insert delay cells
+to meet hold timing.
+
+Both the area and the timing cost trace to the same decision: eight opcodes
+across two 128-bit registers means every opcode bit drives 256 write-mode
+multiplexers. The arithmetic is nearly free; selecting what to write is not.
+
+Power has not been measured under annotated activity. LibreLane reports 2.406 mW
+assuming default switching, which is not meaningful here and is not quoted.
+
 ## Instruction set
 
 Opcode on `uio[2:0]`, pulse `uio[3]` high for one clock to execute.
