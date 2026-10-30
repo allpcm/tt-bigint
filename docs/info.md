@@ -44,16 +44,21 @@ asked, and that is the point of building both.
 
 ## Measured results
 
-CI run 40520428533, LibreLane, sky130A. All checks green.
+CI run 40615325101, LibreLane, sky130A. All checks green.
+
+The tile occupies **1×2 — two tiles.** It was first built at 2×2 and used only
+33% of it; rebuilt at 1×2 it uses 71%, and every other measure improved: 18.2%
+fewer placed cells and 0.98 ns more setup slack, because a compact die needs
+less buffering to drive shorter wires. Synthesis is unchanged at 1,577 cells.
 
 | | |
 |---|---|
 | Synthesis | 1,577 cells, 17,600 µm² |
-| Post-PnR standard cells | 3,221 instances, 25,092 µm² |
-| Die area (2×2) / utilization | 75,602 µm² / 34.6% |
-| Flip-flops | 277, 5,892 µm² |
-| Worst setup slack | 4.34 ns of 20 ns (ss, 100 °C, 1.60 V) |
-| Worst hold slack | +0.113 ns (ff, −40 °C, 1.95 V) |
+| Post-PnR standard cells | 2,634 instances, 24,321 µm² |
+| Die area (1×2) / utilization | 36,347 µm² / 71.0% |
+| Flip-flops | 277, 5,890 µm² |
+| Worst setup slack | 5.32 ns of 20 ns (ss, 100 °C, 1.60 V) |
+| Worst hold slack | +0.110 ns (ff, −40 °C, 1.95 V) |
 | Setup/hold TNS, WNS | 0.0 at every corner |
 | DRC route / magic | 0 / 0 |
 | Verilator `-Wall`, inferred latches | clean, 0 |

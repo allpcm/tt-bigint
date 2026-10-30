@@ -30,25 +30,50 @@ complement, so there is no subtractor on the die at all.
 
 ## Verified results
 
-CI run [`40520428533`](https://github.com/allpcm/tt-bigint/actions/runs/40520428533)
+CI run [`40615325101`](https://github.com/allpcm/tt-bigint/actions/runs/40615325101)
 — LibreLane, sky130A. All four `gds` jobs green: build, precheck, gate-level
 test, viewer.
 
 | | |
 |---|---|
-| Tile size / clock | 2×2, 50 MHz |
+| Tile size / clock | **1×2**, 50 MHz |
 | Synthesis | 1,577 cells, 17,600 µm² |
-| Post-PnR standard cells | 3,221 instances, 25,092 µm² |
-| Die area / utilization | 75,602 µm² / **34.6%** |
-| Flip-flops | 277, 5,892 µm² |
-| Worst setup slack | 4.34 ns of a 20 ns period (ss, 100 °C, 1.60 V) |
-| Worst hold slack | +0.113 ns (ff, −40 °C, 1.95 V) |
+| Post-PnR standard cells | 2,634 instances, 24,321 µm² |
+| Die area / utilization | 36,347 µm² / **71.0%** |
+| Flip-flops | 277, 5,890 µm² |
+| Worst setup slack | 5.32 ns of a 20 ns period (ss, 100 °C, 1.60 V) |
+| Worst hold slack | +0.110 ns (ff, −40 °C, 1.95 V) |
 | Setup/hold TNS and WNS | 0.0 at every corner |
 | DRC (route and magic) | 0 |
 | Tiny Tapeout precheck | pass |
 | Verilator `-Wall`, inferred latches | clean, 0 |
 | Testbench | 5 tests, RTL and gate-level, all passing |
 | ADD / SUB latency | 130 cycles, fixed |
+
+### Halving the die made it better
+
+The design was first built at 2×2 and used a third of it. Rebuilt at 1×2 — two
+tiles instead of four — every measure improved except headroom:
+
+| | 2×2 | 1×2 | |
+|---|---|---|---|
+| die area | 75,602 µm² | 36,347 µm² | −51.9% |
+| post-PnR cell instances | 3,221 | 2,634 | **−18.2%** |
+| post-PnR cell area | 25,092 µm² | 24,321 µm² | −3.1% |
+| utilization | 33.2% | 71.0% | |
+| worst setup slack | 4.34 ns | **5.32 ns** | **+22.7%** |
+
+Synthesis is identical — same 1,577 cells — because synthesis does not know the
+die size. Everything that changed was added during place-and-route.
+
+**The timing got better on the smaller die**, which is the opposite of the usual
+intuition that packing tighter costs you margin. The reason is visible in the
+critical-path breakdown below: this design's worst path is dominated by fanout
+and hold-fix buffering, not by logic. A compact die has shorter wires, so the
+flow needs fewer buffers to drive them — 587 fewer placed cells, and almost a
+nanosecond of slack handed back.
+
+Worth remembering before reflexively asking for a bigger die.
 
 ### Where the time actually goes
 
